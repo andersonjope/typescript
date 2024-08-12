@@ -6,6 +6,7 @@ import EnviaConsoleLog2CreateHandler from "../../../domain/event/handler/envia.c
 import EnviaConsoleLogCreateHandler from "../../../domain/event/handler/envia.console.log.create.handler";
 import Address from "../../../domain/entity/address";
 import Customer from "../../../domain/entity/customer";
+import ChangeAddressEvent from "../../../domain/event/change.address.event";
 
 describe("Domain customer events tests", () => {
   it("Should customer register an event handler", () => {
@@ -129,10 +130,10 @@ describe("Domain customer events tests", () => {
     const eventHandler = new EnviaConsoleLogCreateHandler();
     const spyEventHandler = jest.spyOn(eventHandler, "handle");
 
-    eventDispatcher.register("CustomerCreateEvent", eventHandler);
+    eventDispatcher.register("ChangeAddressEvent", eventHandler);
 
     expect(
-      eventDispatcher.getEventHandlers["CustomerCreateEvent"][0]
+      eventDispatcher.getEventHandlers["ChangeAddressEvent"][0]
     ).toMatchObject(eventHandler);
 
     const address = new Address("Street 1", 10, "City 1", "ST", "64057-153");
@@ -142,13 +143,13 @@ describe("Domain customer events tests", () => {
 
     expect(customer.address.street).toBe("Street 1");
 
-    const customerCreateEvent = new CustomerCreateEvent({
+    const changeAddressEvent = new ChangeAddressEvent({
       id: customer.id,
       name: customer.name,
       endereco: customer.address.toString(),
     });
 
-    eventDispatcher.notify(customerCreateEvent);
+    eventDispatcher.notify(changeAddressEvent);
     expect(spyEventHandler).toHaveBeenCalled();
   });
 });
